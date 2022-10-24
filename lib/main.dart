@@ -6,8 +6,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fullscreen/fullscreen.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
 
+/// main文アプリケーションを実行してる
 void main() => runApp(const MyApp());
 
+/**
+全てをまとめたアプリケーションを定義
+こいつ自体はタイトルを決めて他のウィジェットを呼び出してるだけ
+**/
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -20,6 +25,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/**
+上で呼び出されているウィジェット
+タイトル文字列を受取り、状態をもとに色々描画？
+**/
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -29,11 +38,13 @@ class MyHomePage extends StatefulWidget {
   State createState() => TestHomePage();
 }
 
+/// 上で読み込まれている状態
 class TestHomePage extends State<MyHomePage> {
+///フルスクリーン、実動作不明
   Future<void> fullscreen() async {
     await FullScreen.enterFullScreen(FullScreenMode.EMERSIVE);
   }
-
+///通知、実動作不明
   Future<void> notify() {
     final flnp = FlutterLocalNotificationsPlugin();
     return flnp
@@ -56,12 +67,12 @@ class TestHomePage extends State<MyHomePage> {
               ),
             )));
   }
-
+///他アプリ切り替え不能、実動作不明
   late final Stream<KioskMode> _currentMode = watchKioskMode();
   double currentBrightness = 0.0;
   double _value = 0.0;
   bool _light = false;
-
+//ライトトグルしてる
   Future<void> toggleLight(bool light) async {
     if (light) {
       try {
@@ -77,7 +88,7 @@ class TestHomePage extends State<MyHomePage> {
       }
     }
   }
-
+///状態の初期化
   @override
   void initState() {
     Future(() async {
@@ -87,11 +98,16 @@ class TestHomePage extends State<MyHomePage> {
     super.initState();
   }
 
+/**
+各種状態をもとにウィジェットを構成
+ボタンとかテキストとか色々表示するようにしてる
+**/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
+///受け取ったタイトルを表示
+	 		appBar: AppBar(
+			title: Text(widget.title),
         ),
         body: Center(
             child: Column(
