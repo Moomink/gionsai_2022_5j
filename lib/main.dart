@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:screen_brightness/screen_brightness.dart';
-import 'package:kiosk_mode/kiosk_mode.dart';
+import 'package:kiosk_plugin/kiosk_plugin.dart';
 import 'package:torch_light/torch_light.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fullscreen/fullscreen.dart';
-
+import 'package:kiosk_mode/kiosk_mode.dart';
 
 void main() => runApp(const MyApp());
 
@@ -30,24 +30,31 @@ class MyHomePage extends StatefulWidget {
 }
 
 class TestHomePage extends State<MyHomePage> {
-  Future<void> fullscreen()async{
+  Future<void> fullscreen() async {
     await FullScreen.enterFullScreen(FullScreenMode.EMERSIVE);
   }
+
   Future<void> notify() {
     final flnp = FlutterLocalNotificationsPlugin();
-    return flnp.initialize(
-      InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      ),
-    ).then((_) => flnp.show(0, 'title', 'body', NotificationDetails(
-      android: AndroidNotificationDetails(
-        'channel_id',
-        'channel_name',
-        channelDescription: 'channel_description',
-        importance: Importance.max,
-        priority: Priority.high,
-      ),
-    )));
+    return flnp
+        .initialize(
+          InitializationSettings(
+            android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          ),
+        )
+        .then((_) => flnp.show(
+            0,
+            'title',
+            'body',
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                'channel_id',
+                'channel_name',
+                channelDescription: 'channel_description',
+                importance: Importance.max,
+                priority: Priority.high,
+              ),
+            )));
   }
 
   late final Stream<KioskMode> _currentMode = watchKioskMode();
@@ -70,7 +77,6 @@ class TestHomePage extends State<MyHomePage> {
       }
     }
   }
-
 
   @override
   void initState() {
@@ -103,11 +109,11 @@ class TestHomePage extends State<MyHomePage> {
                   });
                 }),
             const MaterialButton(
-              onPressed: startKioskMode,
+              onPressed: KioskPlugin.startKioskMode,
               child: Text('Start Kiosk Mode'),
             ),
             const MaterialButton(
-              onPressed: stopKioskMode,
+              onPressed: KioskPlugin.stopKioskMode,
               child: Text('Stop Kiosk Mode'),
             ),
             MaterialButton(

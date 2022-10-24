@@ -15,6 +15,7 @@
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:showWhenLocked="true"
+            android:lockTaskMode="normal"
             android:turnScreenOn="true"
             android:windowSoftInputMode="adjustResize">
             <!-- Specifies an Android theme to apply to this Activity as soon as
@@ -30,16 +31,15 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".AdminReceiver"
-            android:label="device admin"
+            android:name="app.hh.kiosk_plugin.MyDeviceAdminReceiver"
             android:exported="false"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
-
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
             </intent-filter>
         </receiver>
         <!-- Don't delete the meta-data below.
