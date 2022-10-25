@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:gionsai_5j/widget/chat_container.dart';
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
 class MessageData extends ChangeNotifier {
@@ -16,8 +17,7 @@ class MessageData extends ChangeNotifier {
   ];
   */
 
-
- // List<Widget> get messages => _messages;
+  // List<Widget> get messages => _messages;
 
   Stream<Widget> get stream => _controller.stream;
 
@@ -28,21 +28,27 @@ class MessageData extends ChangeNotifier {
     _controller.close();
   }
 
+
+
   void addWidget(String action, dynamic body) {
     late Widget widget;
 
     switch (action) {
       case "message":
         print("Received [$body].");
-        widget = Text(body, textAlign: TextAlign.center);
+        widget = ChatContainer(child: Text(body));
         break;
 
       case "image":
         String base = body.split(',')[1];
         print("Received [$base]");
-        var imageData = base64Decode(base);
-        widget = Image.memory(imageData);
+        var image= Image.memory(base64Decode(base));
+        widget = ChatContainer(child: image,isImage: true);
         break;
+
+      case "template":
+        int tempNumber = int.parse(body.split(":")[0]);
+        bool isEnable = body.split(":")[1] == "true";
     }
 
     // notifyListeners();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/class/message_data.dart';
+import 'package:gionsai_5j/widget/chat_container.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -40,6 +41,10 @@ class TestHomePage extends State<MyHomePage> {
         (data) => Provider.of<MessageData>(context, listen: false)
             .addWidget("image", data));
 
+    socket.on(
+        "template",
+        (data) => Provider.of<MessageData>(context, listen: false)
+            .addWidget("template", data));
     socket.onDisconnect((_) => print('disconnect'));
 
     socket.connect();
@@ -51,25 +56,29 @@ class TestHomePage extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Center(
-            child: StreamBuilder(
-          stream: context.watch<MessageData>().stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return Text("ERROR");
-              //TODO 何とかする
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return Container();
-            } else {
-              _messages.add(snapshot.data!);
-              var widgetList = _messages;
-              return ListView.builder(
-                  itemCount: widgetList.length,
-                  itemBuilder: (context, index) {
-                    return widgetList[index];
-                  });
-            }
-          },
-        )));
+        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+         Flexible(child:
+          StreamBuilder(
+            stream: context.watch<MessageData>().stream,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text("ERROR");
+                //TODO 何とかする
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return Container();
+              } else {
+                _messages.add(snapshot.data!);
+                var widgetList = _messages;
+                return ListView.builder(
+
+                    itemCount: widgetList.length,
+                    itemBuilder: (context, index) {
+                      return widgetList[index];
+                    });
+              }
+            },
+          )
+         )
+        ]));
   }
 }
