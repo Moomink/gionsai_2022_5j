@@ -15,6 +15,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class TestHomePage extends State<MyHomePage> {
+  List<Widget> _messages = [];
+
   IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
@@ -25,10 +27,6 @@ class TestHomePage extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
-      'transports': ['websocket'],
-      'autoConnect': false,
-    });
 
     socket.onConnect((_) {
       print('connect');
@@ -37,6 +35,10 @@ class TestHomePage extends State<MyHomePage> {
         "message",
         (data) => Provider.of<MessageData>(context, listen: false)
             .addWidget("message", data));
+    socket.on(
+        "image",
+        (data) => Provider.of<MessageData>(context, listen: false)
+            .addWidget("image", data));
 
     socket.onDisconnect((_) => print('disconnect'));
 
@@ -59,7 +61,8 @@ class TestHomePage extends State<MyHomePage> {
             } else if (snapshot.connectionState == ConnectionState.waiting) {
               return Container();
             } else {
-              var widgetList = context.watch<MessageData>().messages;
+              _messages.add(snapshot.data!);
+              var widgetList = _messages;
               return ListView.builder(
                   itemCount: widgetList.length,
                   itemBuilder: (context, index) {
