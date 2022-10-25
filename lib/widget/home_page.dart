@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
-
-
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -32,27 +30,43 @@ class TestHomePage extends State<MyHomePage> {
       'autoConnect': false,
     });
 
+    socket.onConnect((_) {
+      print('connect');
+    });
+    socket.on(
+        "message",
+        (data) => Provider.of<MessageData>(context, listen: false)
+            .addWidget("message", data));
+
+    socket.onDisconnect((_) => print('disconnect'));
+
     socket.connect();
   }
 
   @override
   Widget build(BuildContext context) {
-    socket.onConnect((_) {
-      print('connect');
-    });
-    socket.on("message", (data) {
-      print('message received');
-      context.read<MessageData>().addWidget("message",data);
-    });
-    socket.onDisconnect((_) => print('disconnect'));
-
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
         body: Center(
-            child: ListView(
-          children: context.watch<MessageData>().messages,
+            child: StreamBuilder(
+          stream: context.watch<MessageData>().stream,
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text("ERROR");
+              //TODO 何とかする
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container();
+            } else {
+              var widgetList = context.watch<MessageData>().messages;
+              return ListView.builder(
+                  itemCount: widgetList.length,
+                  itemBuilder: (context, index) {
+                    return widgetList[index];
+                  });
+            }
+          },
         )));
   }
 }
