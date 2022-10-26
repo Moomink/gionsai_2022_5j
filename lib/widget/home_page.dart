@@ -18,7 +18,7 @@ class MyHomePage extends StatefulWidget {
 class TestHomePage extends State<MyHomePage> {
   List<Widget> _messages = [];
 
-  IO.Socket socket = IO.io('http://192.168.43.120:18526', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -53,14 +53,14 @@ class TestHomePage extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          leading: Icon(Icons.arrow_back_ios),
-          centerTitle: true,
-          title: Text("♥ miyu ♥"),
-        ),
         body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              AppBar(
+                leading: Icon(Icons.arrow_back_ios),
+                centerTitle: true,
+                title: Text("♥ miyu ♥"),
+              ),
               Flexible(
                   child: StreamBuilder(
                 stream: context.watch<MessageData>().stream,
@@ -81,7 +81,8 @@ class TestHomePage extends State<MyHomePage> {
                         });
                   }
                 },
-              ))
+              )),
+              Image.asset("assets/chat.jpg")
             ]));
   }
 }

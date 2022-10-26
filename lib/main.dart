@@ -13,8 +13,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
       title: '5J お化け屋敷',
+      theme: ThemeData.dark(),
       home: MyHomePage(title: 'OBAKE'),
     );
   }
