@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/widget/chat_container.dart';
@@ -44,12 +45,11 @@ class MessageData extends ChangeNotifier {
       case "image":
         String base = body.split(',')[1];
         print("Received [$base]");
-        var image = Image.memory(base64Decode(base));
+        var image =GestureDetector(child:
+        Image.memory(base64Decode(base)));
         widget = ChatContainer(child: image, isImage: true);
         break;
 
-      case "template":
-        var jsonData = jsonDecode(body);
     }
 
     // notifyListeners();
@@ -57,3 +57,5 @@ class MessageData extends ChangeNotifier {
     _controller.sink.add(widget);
   }
 }
+
+

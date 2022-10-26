@@ -45,11 +45,10 @@ dependencies:
   torch_light: ^0.4.0
   flutter_local_notifications: ^12.0.2
   fullscreen: ^1.0.3
-  flutter_chat_ui: ^1.6.5
   socket_io_client: ^2.0.0
   provider: ^6.0.4
-  just_audio: ^0.9.30
   audioplayers: ^0.20.1
+  nil: ^1.1.1
 
 dev_dependencies:
   flutter_test:
