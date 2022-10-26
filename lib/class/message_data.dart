@@ -8,16 +8,9 @@ import 'package:kiosk_plugin/kiosk_plugin.dart';
 class MessageData extends ChangeNotifier {
   final _controller = StreamController<Widget>();
 
-  /*
-  List<Widget> _messages = [
-    const MaterialButton(
-      onPressed: KioskPlugin.stopKioskMode,
-      child: Text('Stop Kiosk Mode'),
-    ),
-  ];
-  */
+  List<Widget> _messages = [];
 
-  // List<Widget> get messages => _messages;
+  List<Widget> get messages => _messages;
 
   Stream<Widget> get stream => _controller.stream;
 
@@ -27,8 +20,6 @@ class MessageData extends ChangeNotifier {
     super.dispose();
     _controller.close();
   }
-
-
 
   void addWidget(String action, dynamic body) {
     late Widget widget;
@@ -42,13 +33,12 @@ class MessageData extends ChangeNotifier {
       case "image":
         String base = body.split(',')[1];
         print("Received [$base]");
-        var image= Image.memory(base64Decode(base));
-        widget = ChatContainer(child: image,isImage: true);
+        var image = Image.memory(base64Decode(base));
+        widget = ChatContainer(child: image, isImage: true);
         break;
 
       case "template":
-        int tempNumber = int.parse(body.split(":")[0]);
-        bool isEnable = body.split(":")[1] == "true";
+        var jsonData = jsonDecode(body);
     }
 
     // notifyListeners();
