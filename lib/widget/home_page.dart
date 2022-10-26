@@ -18,7 +18,7 @@ class MyHomePage extends StatefulWidget {
 class TestHomePage extends State<MyHomePage> {
   List<Widget> _messages = [];
 
-  IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.43.120:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -54,31 +54,34 @@ class TestHomePage extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          leading: Icon(Icons.arrow_back_ios),
+          centerTitle: true,
+          title: Text("♥ miyu ♥"),
         ),
-        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-         Flexible(child:
-          StreamBuilder(
-            stream: context.watch<MessageData>().stream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text("ERROR");
-                //TODO 何とかする
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container();
-              } else {
-                _messages.add(snapshot.data!);
-                var widgetList = _messages;
-                return ListView.builder(
-
-                    itemCount: widgetList.length,
-                    itemBuilder: (context, index) {
-                      return widgetList[index];
-                    });
-              }
-            },
-          )
-         )
-        ]));
+        body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Flexible(
+                  child: StreamBuilder(
+                stream: context.watch<MessageData>().stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("ERROR");
+                    //TODO 何とかする
+                  } else if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return Container();
+                  } else {
+                    context.read<MessageData>().messages.add(snapshot.data!);
+                    var widgetList = context.read<MessageData>().messages;
+                    return ListView.builder(
+                        itemCount: widgetList.length,
+                        itemBuilder: (context, index) {
+                          return widgetList[index];
+                        });
+                  }
+                },
+              ))
+            ]));
   }
 }
