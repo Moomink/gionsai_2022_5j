@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: '5J お化け屋敷',
       theme: ThemeData.dark(),
-      home: MyHomePage(title: 'OBAKE'),
+      home: const MyHomePage(title: 'OBAKE'),
     );
   }
 }
