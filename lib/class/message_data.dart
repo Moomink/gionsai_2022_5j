@@ -4,8 +4,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/widget/chat_container.dart';
-
+import 'package:vibration/vibration.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:vibration/vibration.dart';
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
 class MessageData extends ChangeNotifier {
@@ -19,7 +20,6 @@ class MessageData extends ChangeNotifier {
 
   Stream<Widget> get stream => _controller.stream;
 
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -27,7 +27,7 @@ class MessageData extends ChangeNotifier {
     _controller.close();
   }
 
-  void clear(){
+  void clear() {
     this.messages.clear();
     notifyListeners();
   }
@@ -38,6 +38,7 @@ class MessageData extends ChangeNotifier {
     switch (action) {
       case "message":
         print("Received [$body].");
+        Vibration.vibrate();
         this._player.play("line_simplebell.mp3");
         widget = ChatContainer(child: Text(body));
         break;
@@ -45,11 +46,10 @@ class MessageData extends ChangeNotifier {
       case "image":
         String base = body.split(',')[1];
         print("Received [$base]");
-        var image =GestureDetector(child:
-        Image.memory(base64Decode(base)));
+        Vibration.vibrate();
+        var image = GestureDetector(child: Image.memory(base64Decode(base)));
         widget = ChatContainer(child: image, isImage: true);
         break;
-
     }
 
     // notifyListeners();
@@ -57,5 +57,3 @@ class MessageData extends ChangeNotifier {
     _controller.sink.add(widget);
   }
 }
-
-
