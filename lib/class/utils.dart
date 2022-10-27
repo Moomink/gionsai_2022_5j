@@ -4,7 +4,6 @@ import 'package:kiosk_plugin/kiosk_plugin.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
 
 class Utils {
-  bool _light = false;
   //フラッシュの切り替え  引数にtrueがあると光る
   static Future<void> changeLight({required bool enable}) async {
     if (enable) {

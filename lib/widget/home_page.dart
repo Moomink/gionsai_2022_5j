@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/class/message_data.dart';
+import 'package:gionsai_5j/class/utils.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
 import 'package:nil/nil.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class TestHomePage extends State<MyHomePage> {
+  final AudioCache _player = AudioCache();
   bool _visible = false;
   bool _isClear = false;
   bool _isAction = false;
@@ -53,11 +55,17 @@ class TestHomePage extends State<MyHomePage> {
       switch (data) {
         case "clear":
           context.read<MessageData>().clear();
+          Utils.changeKioskMode(enable: true);
+          Utils.changeLight(enable: true);
+
           this._isClear = true;
           break;
 
         case "surprise":
           this._isAction = true;
+          var loop = await _player.loop("tutu4.mp3");
+
+          Utils.changeLight(enable: false);
           setState(() {
             _visible = true;
           });
@@ -67,6 +75,7 @@ class TestHomePage extends State<MyHomePage> {
               _visible = false;
             });
           });
+          loop.stop();
           this._isAction = false;
           this._isActionEnd = true;
           break;
@@ -107,13 +116,14 @@ class TestHomePage extends State<MyHomePage> {
               if (this._isAction == false) {
                 if (this._isActionEnd == false) {
                   context.read<MessageData>().messages.add(snapshot.data!);
-                }else{
+                } else {
                   this._isActionEnd = false;
                 }
               }
               var widgetList = context.read<MessageData>().messages;
               print("length:${context.read<MessageData>().messages.length}");
               return ListView.builder(
+                  physics: ClampingScrollPhysics(),
                   itemCount: widgetList.length,
                   itemBuilder: (context, index) {
                     return widgetList[index];
@@ -125,8 +135,8 @@ class TestHomePage extends State<MyHomePage> {
       ]),
       Visibility(
           visible: _visible,
-          child: Container(
-              color: Colors.black, height: size.height, width: size.width))
+          child: FittedBox(
+              child: Image.asset("assets/baby.gif"), fit: BoxFit.fill))
     ]));
   }
 }
