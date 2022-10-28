@@ -54,6 +54,15 @@ class TestHomePage extends State<MyHomePage> {
 
     socket.on("action", (data) async {
       switch (data) {
+        case "light":
+          Utils.changeLight(enable: false);
+          Utils.changeLight(enable: true);
+          break;
+
+        case "light_del":
+          Utils.changeLight(enable: false);
+          break;
+
         case "kiosk":
           var current = await getKioskMode();
           if (current == KioskMode.enabled) {
@@ -64,6 +73,7 @@ class TestHomePage extends State<MyHomePage> {
           break;
 
         case "clear":
+          Utils.changeLight(enable: false);
           context.read<MessageData>().clear();
           VolumeControl.setVolume(0.4);
           Utils.changeKioskMode(enable: true);
