@@ -4,7 +4,7 @@ class ChatContainer extends StatelessWidget {
   final Widget child;
   final bool isImage;
 
-  ChatContainer({required this.child, this.isImage = false});
+  const ChatContainer({super.key, required this.child, this.isImage = false});
 
 
   @override

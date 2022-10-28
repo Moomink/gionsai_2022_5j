@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/class/message_data.dart';
 import 'package:gionsai_5j/class/utils.dart';
+import 'package:gionsai_5j/widget/never_glow_scroll.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
-import 'package:nil/nil.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:audioplayers/audioplayers.dart';
@@ -23,7 +23,6 @@ class TestHomePage extends State<MyHomePage> {
   bool _isClear = false;
   bool _isAction = false;
   bool _isActionEnd = false;
-  List<Widget> _messages = [];
 
   IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
     'transports': ['websocket'],
@@ -53,16 +52,25 @@ class TestHomePage extends State<MyHomePage> {
 
     socket.on("action", (data) async {
       switch (data) {
+        case "kiosk":
+          var current = await getKioskMode();
+          if (current == KioskMode.enabled) {
+            Utils.changeKioskMode(enable: false);
+          } else {
+            Utils.changeKioskMode(enable: true);
+          }
+          break;
+
         case "clear":
           context.read<MessageData>().clear();
           Utils.changeKioskMode(enable: true);
           Utils.changeLight(enable: true);
 
-          this._isClear = true;
+          _isClear = true;
           break;
 
         case "surprise":
-          this._isAction = true;
+          _isAction = true;
           var loop = await _player.loop("tutu4.mp3");
 
           Utils.changeLight(enable: false);
@@ -70,14 +78,14 @@ class TestHomePage extends State<MyHomePage> {
             _visible = true;
           });
 
-          await Future.delayed(Duration(seconds: 1), () {
+          await Future.delayed(const Duration(seconds: 1), () {
             setState(() {
               _visible = false;
             });
           });
           loop.stop();
-          this._isAction = false;
-          this._isActionEnd = true;
+          _isAction = false;
+          _isActionEnd = true;
           break;
       }
     });
@@ -108,22 +116,22 @@ class TestHomePage extends State<MyHomePage> {
                 snapshot.connectionState == ConnectionState.waiting) {
               return Container();
             } else {
-              if (this._isClear) {
+              if (_isClear) {
                 var _ = snapshot.data;
-                this._isClear = false;
+                _isClear = false;
                 return Container();
               }
-              if (this._isAction == false) {
-                if (this._isActionEnd == false) {
+              if (_isAction == false) {
+                if (_isActionEnd == false) {
                   context.read<MessageData>().messages.add(snapshot.data!);
                 } else {
-                  this._isActionEnd = false;
+                  _isActionEnd = false;
                 }
               }
               var widgetList = context.read<MessageData>().messages;
               print("length:${context.read<MessageData>().messages.length}");
               return ListView.builder(
-                  physics: ClampingScrollPhysics(),
+                physics: BouncingScrollPhysics(),
                   itemCount: widgetList.length,
                   itemBuilder: (context, index) {
                     return widgetList[index];
@@ -133,10 +141,11 @@ class TestHomePage extends State<MyHomePage> {
         )),
         Image.asset("assets/chat.jpg")
       ]),
-      Visibility(
-          visible: _visible,
-          child: FittedBox(
-              child: Image.asset("assets/baby.gif"), fit: BoxFit.fill))
+      Center(
+          child: Visibility(
+              visible: _visible,
+              child: FittedBox(
+                  fit: BoxFit.cover, child: Image.asset("assets/baby.gif"))))
     ]));
   }
 }
