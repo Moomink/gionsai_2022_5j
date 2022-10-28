@@ -9,14 +9,14 @@ class Utils {
     if (enable) {
       try {
         await TorchLight.enableTorch();
-      } on Exception catch (_) {
-        // Handle error
+      } on Exception catch (e) {
+        print(e);
       }
     } else {
       try {
         await TorchLight.disableTorch();
-      } on Exception catch (_) {
-        // Handle error
+      } on Exception catch (e) {
+        print(e);
       }
     }
   }

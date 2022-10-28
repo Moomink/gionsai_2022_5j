@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fullscreen/fullscreen.dart';
+import 'package:vibration/vibration.dart';
 import 'package:gionsai_5j/class/message_data.dart';
 import 'package:gionsai_5j/class/utils.dart';
-import 'package:gionsai_5j/widget/never_glow_scroll.dart';
 import 'package:kiosk_mode/kiosk_mode.dart';
 import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:audioplayers/audioplayers.dart';
+import 'package:volume_control/volume_control.dart';
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -24,7 +26,7 @@ class TestHomePage extends State<MyHomePage> {
   bool _isAction = false;
   bool _isActionEnd = false;
 
-  IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.43.120:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -63,8 +65,10 @@ class TestHomePage extends State<MyHomePage> {
 
         case "clear":
           context.read<MessageData>().clear();
+          VolumeControl.setVolume(0.4);
           Utils.changeKioskMode(enable: true);
           Utils.changeLight(enable: true);
+          Utils.changeBrightness(0.9);
 
           _isClear = true;
           break;
@@ -73,17 +77,25 @@ class TestHomePage extends State<MyHomePage> {
           _isAction = true;
           var loop = await _player.loop("tutu4.mp3");
 
+          VolumeControl.setVolume(1.0);
           Utils.changeLight(enable: false);
           setState(() {
+            context.read<MessageData>().clear();
             _visible = true;
           });
 
-          await Future.delayed(const Duration(seconds: 1), () {
+          Vibration.vibrate(duration: 2000);
+
+          // _isClear = true;
+
+          await Future.delayed(const Duration(seconds: 2), () {
             setState(() {
               _visible = false;
             });
           });
           loop.stop();
+
+          VolumeControl.setVolume(0.4);
           _isAction = false;
           _isActionEnd = true;
           break;
@@ -131,7 +143,7 @@ class TestHomePage extends State<MyHomePage> {
               var widgetList = context.read<MessageData>().messages;
               print("length:${context.read<MessageData>().messages.length}");
               return ListView.builder(
-                physics: BouncingScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   itemCount: widgetList.length,
                   itemBuilder: (context, index) {
                     return widgetList[index];

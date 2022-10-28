@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:gionsai_5j/widget/chat_container.dart';
 import 'package:vibration/vibration.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:gionsai_5j/class/utils.dart';
 
 class MessageData extends ChangeNotifier {
   final _controller = StreamController<Widget>();
@@ -35,10 +37,17 @@ class MessageData extends ChangeNotifier {
     _player.play("line_simplebell.mp3");
     switch (action) {
       case "message":
+        Utils.changeBrightness(0.9);
         print("Received [$body].");
         Vibration.vibrate();
         _player.play("line_simplebell.mp3");
         widget = ChatContainer(child: Text(body));
+        if (body == "うしろ") {
+          print(" うしろ検知");
+          Future.delayed(const Duration(seconds: 2), () {
+            Utils.changeBrightness(0.01);
+          });
+        }
         break;
 
       case "image":
