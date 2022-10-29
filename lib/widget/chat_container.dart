@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class ChatContainer extends StatelessWidget {
   final Widget child;
   final bool isImage;
+  final Color backColor;
 
-  const ChatContainer({super.key, required this.child, this.isImage = false});
+  const ChatContainer({super.key, required this.child, this.isImage = false, this.backColor = Colors.lightGreen});
 
 
   @override
@@ -31,9 +32,9 @@ class ChatContainer extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10),
                 padding: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                    color: Colors.lightGreen,
-                    borderRadius: BorderRadius.only(
+                decoration:  BoxDecoration(
+                    color: backColor,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20.0),
                       topRight: Radius.circular(20.0),
                       bottomRight: Radius.circular(20.0),

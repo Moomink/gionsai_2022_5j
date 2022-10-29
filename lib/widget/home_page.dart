@@ -12,6 +12,10 @@ import 'package:volume_control/volume_control.dart';
 import 'package:battery_plus/battery_plus.dart';
 import 'package:kiosk_plugin/kiosk_plugin.dart';
 
+const double SOUND_VOLUME=0.75;
+const String A_NAME= "🌸himeちゃま🌸";
+
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -29,7 +33,7 @@ class TestHomePage extends State<MyHomePage> {
   bool _isAction = false;
   bool _isActionEnd = false;
 
-  IO.Socket socket = IO.io('http://192.168.10.9:18526', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -60,7 +64,7 @@ class TestHomePage extends State<MyHomePage> {
             .addWidget("template", data));
 
     socket.on("action", (data) async {
-      switch (data) {
+      switch (data[0].toString()) {
         case "battery":
           int nowBattery = await Battery().batteryLevel;
           Fluttertoast.showToast(
@@ -89,9 +93,10 @@ class TestHomePage extends State<MyHomePage> {
           break;
 
         case "clear":
+          FullScreen.enterFullScreen(FullScreenMode.EMERSIVE_STICKY);
           Utils.changeLight(enable: false);
           context.read<MessageData>().clear();
-          VolumeControl.setVolume(0.75);
+          VolumeControl.setVolume(SOUND_VOLUME);
           Utils.changeKioskMode(enable: true);
           Utils.changeLight(enable: true);
           Utils.changeBrightness(0.9);
@@ -100,6 +105,7 @@ class TestHomePage extends State<MyHomePage> {
           break;
 
         case "surprise":
+          int time = data[1]; // milliseconds
           _isAction = true;
           var loop = await _player.loop("tutu4.mp3");
 
@@ -110,18 +116,18 @@ class TestHomePage extends State<MyHomePage> {
             _visible = true;
           });
 
-          Vibration.vibrate(duration: 2000);
+          Vibration.vibrate(duration: time.toInt());
 
           // _isClear = true;
 
-          await Future.delayed(const Duration(seconds: 2), () {
+          await Future.delayed(Duration(milliseconds: time.toInt()), () {
             setState(() {
               _visible = false;
             });
           });
           loop.stop();
 
-          VolumeControl.setVolume(0.4);
+          VolumeControl.setVolume(SOUND_VOLUME);
           _isAction = false;
           _isActionEnd = true;
           break;
@@ -139,7 +145,7 @@ class TestHomePage extends State<MyHomePage> {
         appBar: AppBar(
           leading: const Icon(Icons.arrow_back_ios),
           centerTitle: true,
-          title: const Text("♥ miyu ♥"),
+          title: const Text(A_NAME),
         ),
         body: Stack(children: <Widget>[
           Column(
@@ -189,7 +195,7 @@ class TestHomePage extends State<MyHomePage> {
               child: Visibility(
                   visible: _visible,
                   child: FittedBox(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                       child: Image.asset("assets/baby.gif"))))
         ]));
   }
