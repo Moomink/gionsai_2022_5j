@@ -29,7 +29,7 @@ class TestHomePage extends State<MyHomePage> {
   bool _isAction = false;
   bool _isActionEnd = false;
 
-  IO.Socket socket = IO.io('http://192.168.11.10:18526', <String, dynamic>{
+  IO.Socket socket = IO.io('http://192.168.10.9:18526', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -41,6 +41,10 @@ class TestHomePage extends State<MyHomePage> {
     socket.onConnect((_) {
       print('connect');
     });
+    socket.on(
+	"debug_message",
+	(data) => Provider.of<MessageData>(context, listen:false)
+	    .addWidget("debugMessage",data));
     socket.on(
         "message",
         (data) => Provider.of<MessageData>(context, listen: false)
@@ -63,8 +67,7 @@ class TestHomePage extends State<MyHomePage> {
               msg: "now Battery : [${nowBattery}%]",
               gravity: ToastGravity.BOTTOM,
               toastLength: Toast.LENGTH_LONG,
-            fontSize: 16.0
-          );
+              fontSize: 16.0);
           break;
 
         case "light":
@@ -88,7 +91,7 @@ class TestHomePage extends State<MyHomePage> {
         case "clear":
           Utils.changeLight(enable: false);
           context.read<MessageData>().clear();
-          VolumeControl.setVolume(0.4);
+          VolumeControl.setVolume(0.75);
           Utils.changeKioskMode(enable: true);
           Utils.changeLight(enable: true);
           Utils.changeBrightness(0.9);

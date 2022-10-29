@@ -36,11 +36,20 @@ class MessageData extends ChangeNotifier {
     late Widget widget;
     _player.play("line_simplebell.mp3");
     switch (action) {
+      case "debugMessage":
+        Utils.changeBrightness(0.9);
+        print("Debug Received [$body].");
+        // _player.play("line_simplebell.mp3");
+        Vibration.vibrate();
+        widget = ChatContainer(
+            child: Text(body, style: const TextStyle(color: Colors.red)));
+        break;
+
       case "message":
         Utils.changeBrightness(0.9);
         print("Received [$body].");
         Vibration.vibrate();
-        _player.play("line_simplebell.mp3");
+        // _player.play("line_simplebell.mp3");
         widget = ChatContainer(child: Text(body));
         if (body == "うしろ") {
           print(" うしろ検知");
